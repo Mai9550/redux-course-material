@@ -1,17 +1,27 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+function createStore () {
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+  let state
+  let listeners=[]
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+  const getState = () => state
+
+  const subscribe = (listener)=>{
+    listeners.push(listener)
+    return () =>{
+      listeners = listeners.filter((l)=>l!==listener)
+    }
+  }
+
+  return {
+    getState,
+    subscribe
+  }
+  
+}
+
+const store = createStore()
+
+store.subscribe(()=>{console.log('The new state is:',store.getState())})
+const unsubscribe=store.subscribe(()=>{console.log('The store changed')})
+
+unsubscribe()
